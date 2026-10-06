@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Poste de réception AgentPMS, assistant local connecté à QloApps." />
+    <title>AgentPMS · Poste de réception</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Accueil AgentPMS">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <path d="M7 23V12.5L16 7l9 5.5V23" />
+            <path d="M4 23h24M11 23v-6h10v6M11 13h.01M16 13h.01M21 13h.01" />
+          </svg>
+        </span>
+        <span>
+          <strong>AgentPMS</strong>
+          <small>Poste de réception</small>
+        </span>
+      </a>
+      <div class="topbar-meta">
+        <span class="shift-label">Session locale · Réception</span>
+        <span class="connection" id="connectionStatus">
+          <span class="status-dot" aria-hidden="true"></span>
+          Connexion en cours
+        </span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="conversation-panel" aria-labelledby="conversationTitle">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Assistant opérationnel</p>
+            <h1 id="conversationTitle">Que souhaitez-vous faire&nbsp;?</h1>
+          </div>
+          <button class="icon-button" id="newConversation" type="button" title="Nouvelle conversation" aria-label="Nouvelle conversation">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          </button>
+        </div>
+
+        <div class="suggestions" aria-label="Demandes suggérées">
+          <button type="button" data-prompt="Trouve la réservation de Jean Dupont">Trouver Jean Dupont</button>
+          <button type="button" data-prompt="Quelles sont toutes les arrivées du jour ?">Arrivées du jour</button>
+          <button type="button" data-prompt="Quels sont tous les départs du jour ?">Départs du jour</button>
+          <button type="button" data-prompt="Quel est le taux d’occupation pour ce soir ?">Taux d’occupation</button>
+          <button type="button" data-prompt="Cherche les réservations Dupont">Gérer une ambiguïté</button>
+          <button type="button" data-prompt="Vérifie les disponibilités du 2026-10-10 au 2026-10-12">Voir les disponibilités</button>
+          <button type="button" data-prompt="Prépare un devis comparatif avec petit-déjeuner du 08/09 au 12/09 pour 2 personnes, par nuit et pour tout le séjour">Devis détaillé</button>
+          <button type="button" data-prompt="Crée une réservation pour Pierre Delafitte de ce soir jusqu’au 10/09 pour 2 personnes avec petit déjeuner">Créer une réservation</button>
+          <button type="button" data-prompt="Prolonge la réservation 1 d’une nuit">Prolonger un séjour</button>
+          <button type="button" data-prompt="Enregistre le check-in de la réservation 1">Faire un check-in</button>
+          <button type="button" data-prompt="Enregistre le check-out de la réservation 1">Faire un check-out</button>
+          <button type="button" data-prompt="Émets la facture de la réservation 1">Éditer une facture</button>
+          <button type="button" data-prompt="Liste les demandes clients ouvertes">Demandes clients</button>
+          <button type="button" data-prompt="Ajoute un petit-déjeuner à la réservation 1">Ajouter un petit-déjeuner</button>
+        </div>
+
+        <div class="messages" id="messages" role="log" aria-live="polite" aria-label="Conversation avec AgentPMS">
+          <article class="message assistant-message">
+            <div class="avatar" aria-hidden="true">A</div>
+            <div class="message-body">
+              <span class="message-author">AgentPMS</span>
+              <p>Bonjour. Je peux consulter l’activité, préparer un devis, rechercher, créer, modifier ou prolonger une réservation, gérer les arrivées et départs, éditer une facture et traiter les demandes clients dans QloApps. Toute modification vous sera présentée avant exécution.</p>
+            </div>
+          </article>
+        </div>
+
+        <form class="composer" id="composer">
+          <label class="sr-only" for="messageInput">Votre demande</label>
+          <textarea id="messageInput" rows="2" maxlength="2000" placeholder="Ex. Trouve la réservation de Jean Dupont…" required></textarea>
+          <button class="send-button" id="sendButton" type="submit">
+            <span>Envoyer</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 14-7-4 14-3-6-7-1Z" /><path d="m12 13 7-8" /></svg>
+          </button>
+          <p class="composer-note">Les actions sont contrôlées et vérifiées dans le PMS avant confirmation du résultat.</p>
+        </form>
+      </section>
+
+      <aside class="operations-panel" aria-labelledby="operationsTitle">
+        <div class="operations-heading">
+          <div>
+            <p class="eyebrow">Suivi en direct</p>
+            <h2 id="operationsTitle">Activité de l’agent</h2>
+          </div>
+          <span class="mode-pill" id="decisionMode">Mode local</span>
+        </div>
+
+        <section class="system-card" aria-labelledby="systemTitle">
+          <div class="system-card-heading">
+            <span class="system-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 19V8l8-4 8 4v11M2 19h20M8 19v-6h8v6" /></svg>
+            </span>
+            <div>
+              <h3 id="systemTitle">QloApps local</h3>
+              <p id="pmsStatus">Vérification…</p>
+            </div>
+          </div>
+          <div class="capabilities" id="capabilities"></div>
+        </section>
+
+        <section class="activity-section" aria-labelledby="activityTitle">
+          <div class="section-title-row">
+            <h3 id="activityTitle">Étapes</h3>
+            <span id="stepCount">0 étape</span>
+          </div>
+          <ol class="activity-list" id="activityList">
+            <li class="empty-activity">
+              <span class="empty-line"></span>
+              <p>Les outils utilisés et leurs résultats apparaîtront ici.</p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="safety-note">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.7 2.8 8.2 7 10 4.2-1.8 7-5.3 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-5" /></svg>
+          <div>
+            <strong>Actions protégées</strong>
+            <p>Les écritures exigent votre confirmation et une relecture du PMS.</p>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <template id="messageTemplate">
+      <article class="message">
+        <div class="avatar" aria-hidden="true"></div>
+        <div class="message-body">
+          <span class="message-author"></span>
+          <p class="message-text"></p>
+          <div class="message-extra"></div>
+        </div>
+      </article>
+    </template>
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>

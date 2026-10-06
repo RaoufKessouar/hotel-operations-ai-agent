@@ -1,0 +1,29 @@
+name: agentpms
+
+services:
+  qloapps:
+    image: webkul/qloapps_docker@sha256:7ca70eef6c4daed0ce16ab1d77acc1047dfd9887f684b1dfbc3343179df08f2b
+    container_name: agentpms-qloapps
+    environment:
+      MYSQL_DATABASE: ${QLOAPPS_DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${QLOAPPS_DB_ROOT_PASSWORD}
+      USER_PASSWORD: ${QLOAPPS_SSH_PASSWORD}
+      QLOAPPS_API_KEY: ${QLOAPPS_API_KEY}
+      QLOAPPS_SEED_API_KEY: ${QLOAPPS_SEED_API_KEY}
+      QLOAPPS_WRITE_API_KEY: ${QLOAPPS_WRITE_API_KEY}
+    ports:
+      - "127.0.0.1:${QLOAPPS_HTTP_PORT:-8088}:80"
+    volumes:
+      - qloapps_database:/var/lib/mysql
+      - qloapps_application:/home/qloapps/www/QloApps
+      - ./bootstrap_read_api.php:/opt/agentpms/bootstrap_read_api.php:ro
+      - ./bootstrap_seed_api.php:/opt/agentpms/bootstrap_seed_api.php:ro
+      - ./disable_seed_api.php:/opt/agentpms/disable_seed_api.php:ro
+      - ./bootstrap_write_api.php:/opt/agentpms/bootstrap_write_api.php:ro
+      - ./configure_demo_catalog.php:/opt/agentpms/configure_demo_catalog.php:ro
+      - ./agentpms-bridge.php:/home/qloapps/www/QloApps/agentpms-bridge.php:ro
+    restart: unless-stopped
+
+volumes:
+  qloapps_database:
+  qloapps_application:
